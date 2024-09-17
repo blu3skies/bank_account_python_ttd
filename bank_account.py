@@ -7,6 +7,9 @@ class Bank_account:
         self.account_name = account_name
         self.balance = balance
         self.account_number = account_number
+    
+    def deposit(self,amount):
+        self.balance += amount
 
 #customer1 = Bank_account("Joe e", 100, 1)
 #customer2 = Bank_account(10, "bobby")

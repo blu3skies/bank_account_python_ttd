@@ -22,3 +22,7 @@ def test_account_number():
 def test_account_number_is_int():
     assert isinstance(customer1.account_number, int)
     assert isinstance(customer2.account_number, int) == False
+
+def test_deposit():
+    customer1.deposit(5)
+    assert customer1.balance == 15
