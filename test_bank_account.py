@@ -26,3 +26,7 @@ def test_account_number_is_int():
 def test_deposit():
     customer1.deposit(5)
     assert customer1.balance == 15
+
+def test_withdraw():
+    customer1.withdraw(2)
+    assert customer1.balance == 13
