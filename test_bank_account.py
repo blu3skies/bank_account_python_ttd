@@ -18,4 +18,6 @@ def test_account_balance_is_float_or_int():
 
 def test_account_number():
     assert customer1.account_number == 1
+
+def test_account_number_is_int():
     assert isinstance(customer1.account_number, int)
