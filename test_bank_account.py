@@ -1,4 +1,5 @@
 from bank_account import Bank_account
+import pytest
 
 customer1 = Bank_account("Test customer", 10, 1)
 customer2 = Bank_account(10, "bobby", "2")
@@ -30,3 +31,8 @@ def test_deposit():
 def test_withdraw():
     customer1.withdraw(2)
     assert customer1.balance == 13
+
+def test_withdrawl_to_neg_error():
+    customer1.balance = 5
+    with pytest.raises(ValueError, match="Insufficient balance"):
+        customer1.withdraw(6)
