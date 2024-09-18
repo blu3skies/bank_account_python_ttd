@@ -2,11 +2,13 @@ class Bank_account:
     __account_name = ""
     __balance = 0
     __account_number = 0
+    __summary = ""
 
-    def __init__(self, account_name, balance, account_number):
+    def __init__(self, account_name, account_number, balance=0.00, summary=""):
         self.account_name = account_name
         self.balance = balance
         self.account_number = account_number
+        self.summary = summary
     
     def deposit(self, amount):
         self.balance += amount
@@ -17,9 +19,14 @@ class Bank_account:
         else:
             self.balance -= amount
 
-            
-#customer1 = Bank_account("Joe e", 100, 1)
-#customer2 = Bank_account(10, "bobby")
+    def summarising(self):
+        self.summary = f"Account owner: {self.account_name} - Account Balance: £{self.balance} - Accounts Number: {self.account_number}"
 
+#customer3 = Bank_account("Joe Blogs", 3, 32.73)
+
+#customer2 = Bank_account(10, "bobby")
 #isstring = isinstance(customer2.balance, (float, int)) != False
-#print(customer1.balance)
+
+#customer3.summarising()
+#print(customer3.summary == "Account owner: Joe Blogs - Account Balance: £32.73 - Accounts Number: 3")
+#print("Account owner: Joe Blogs - Account Balance: £32.73 - Accounts Number: 3")

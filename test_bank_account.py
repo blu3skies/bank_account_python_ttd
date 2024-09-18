@@ -1,7 +1,7 @@
 from bank_account import Bank_account
 import pytest
 
-customer1 = Bank_account("Test customer", 10, 1)
+customer1 = Bank_account("Test customer", 1, 10)
 customer2 = Bank_account(10, "bobby", "2")
 
 def test_bank_account_init_has_name():
@@ -36,3 +36,9 @@ def test_withdrawl_to_neg_error():
     customer1.balance = 5
     with pytest.raises(ValueError, match="Insufficient balance"):
         customer1.withdraw(6)
+    
+def test_account_desciption():
+    customer3 = Bank_account("Joe Blogs", 3, 32.73)
+    customer3.summarising()
+    assert customer3.summary == "Account owner: Joe Blogs - Account Balance: £32.73 - Accounts Number: 3" 
+
