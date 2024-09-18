@@ -1,3 +1,15 @@
+import sqlite3
+conn = sqlite3.connect('bank.db')
+cursor = conn.cursor()
+
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS Accounts (
+    account_number INTEGER PRIMARY KEY,
+    account_name TEXT NOT NULL,
+    balance REAL NOT NULL
+)
+''')
+
 class Bank_account:
     __account_name = ""
     __balance = 0
