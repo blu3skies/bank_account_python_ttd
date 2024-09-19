@@ -1,15 +1,33 @@
-from bank_account import Bank_account
 import pytest
 import sqlite3
+from bank_account import Bank_account
 
-def test_new_accounts_updates_db():
+@pytest.fixture(autouse=True)
+def setup_db():
+    # This will run before each test automatically
     conn = sqlite3.connect('bank.db')
     cursor = conn.cursor()
-    account = Bank_account("Test Account", 1, 50.0)
+    cursor.execute('DROP TABLE IF EXISTS Accounts')
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS Accounts (
+        account_number INTEGER PRIMARY KEY,
+        account_name TEXT NOT NULL,
+        balance REAL NOT NULL
+    )
+    ''')
+    conn.commit()
+    conn.close()
 
-    cursor.execute('SELECT balance FROM Accounts WHERE account_number = ?', (1))
+def test_new_accounts_updates_db():
+    # Create a new account and check if it updates in the database
+    conn = sqlite3.connect('bank.db')
+    cursor = conn.cursor()
+    
+    account = Bank_account("Test Account", 50.0)
+    
+    cursor.execute('SELECT balance FROM Accounts WHERE account_name = ?', ("Test Account",))
     result = cursor.fetchone()
-
-    assert result[0] == 50
-
+    
+    assert result[0] == 50  # Verify the balance was correctly inserted
+    
     conn.close()
