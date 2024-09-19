@@ -26,12 +26,8 @@ def test_account_balance_is_float_or_int():
     assert isinstance(customer1.balance, (float, int))
     assert isinstance(customer2.balance, (float, int)) == False
 
-#def test_account_number():
-#   assert customer1.account_number == 1
-
-#def test_account_number_is_int():
-#    assert isinstance(customer1.account_number, int)
-#    assert isinstance(customer2.account_number, int) == False
+def test_account_number_is_int():
+    assert isinstance(customer1.account_number, int)
 
 def test_deposit():
     customer1.deposit(5)
