@@ -33,7 +33,6 @@ class Bank_account:
 
         while True:
             account_number = random.randint(100000, 999999)
-            print(account_number)
             cursor.execute('SELECT account_number FROM Accounts WHERE Account_number = ?', (account_number,))
             result = cursor.fetchone()
 
@@ -57,6 +56,17 @@ class Bank_account:
     
     def deposit(self, amount):
         self.balance += amount
+
+        conn =  sqlite3.connect('bank.db')
+        cursor = conn.cursor()
+        cursor.execute(''' 
+                       UPDATE Accounts
+                       SET balance = ?
+                       Where account_number = ? 
+                       ''', (self.balance, self.account_number))
+        conn.commit()
+        conn.close()
+
     
     def withdraw(self, amount):
         if self.balance < amount:
@@ -67,11 +77,12 @@ class Bank_account:
     def summarising(self):
         self.summary = f"Account owner: {self.account_name} - Account Balance: £{self.balance} - Accounts Number: {self.account_number}"
 
-#customer3 = Bank_account("Joe Blogs", 32.73)
+customer3 = Bank_account("Joe Blogs")
 
 #customer2 = Bank_account(10, "bobby")
 #isstring = isinstance(customer2.balance, (float, int)) != False
 
 #customer3.summarising()
-#print(customer3.account_number)
+print(customer3.account_number)
+print(customer3.balance)
 #print("Account owner: Joe Blogs - Account Balance: £32.73 - Accounts Number: 3")

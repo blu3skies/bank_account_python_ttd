@@ -31,3 +31,16 @@ def test_new_accounts_updates_db():
     assert result[0] == 50  # Verify the balance was correctly inserted
     
     conn.close()
+
+def test_deposit_updates_db():
+    conn = sqlite3.connect('bank.db')
+    cursor = conn.cursor()
+
+    customer1 = Bank_account("Ronnie", 10)
+
+    customer1.deposit(21)
+    acc_num = customer1.account_number
+
+    cursor.execute('SELECT balance FROM Accounts WHERE account_number = ?', (acc_num,))
+    result = cursor.fetchone()
+    assert result[0] == 31
