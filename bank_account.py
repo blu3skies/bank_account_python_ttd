@@ -12,6 +12,15 @@ CREATE TABLE IF NOT EXISTS Accounts (
 )
 ''')
 
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS Transactions (
+    trans_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender_account_number REAL NOT NULL,
+    recipient_account_number REAL NOT NULL,
+    amount REAL NOT NULL
+)
+''')
+
 class Bank_account:
     __account_name = ""
     __balance = 0
@@ -53,7 +62,6 @@ class Bank_account:
         conn.commit()
         conn.close()
 
-    
     def deposit(self, amount):
         self.balance += amount
 
@@ -67,22 +75,46 @@ class Bank_account:
         conn.commit()
         conn.close()
 
-    
     def withdraw(self, amount):
         if self.balance < amount:
             raise ValueError("Insufficient balance")
         else:
             self.balance -= amount
 
+    def transfer(self, amount, recipient_account_number):
+        if self.balance < amount:
+            raise ValueError("Insufficient balance to make transfer.")
+        
+        conn =  sqlite3.connect('bank.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT balance FROM Accounts WHERE account_number = ?', (recipient_account_number,))
+        result = cursor.fetchone()
+
+        if result is None:
+            conn.close()
+            raise ValueError("Recipient account does not exist.")
+        
+        recipient_balance = result[0] + amount
+        self.balance -= amount
+
+        cursor.execute('UPDATE Accounts SET balance = ? WHERE account_number = ?',(self.balance, self.account_number))
+        cursor.execute('UPDATE Accounts SET balance = ? WHERE account_number = ?',(recipient_balance, recipient_account_number))
+        cursor.execute('''
+                       INSERT INTO Transactions (sender_account_number, recipient_account_number, amount)
+                       VALUES (?, ?, ?)
+                       ''', (self.account_number, recipient_account_number, amount))
+        conn.commit()
+        conn.close()
+
     def summarising(self):
         self.summary = f"Account owner: {self.account_name} - Account Balance: £{self.balance} - Accounts Number: {self.account_number}"
 
-customer3 = Bank_account("Joe Blogs")
-
-#customer2 = Bank_account(10, "bobby")
-#isstring = isinstance(customer2.balance, (float, int)) != False
-
-#customer3.summarising()
-print(customer3.account_number)
-print(customer3.balance)
-#print("Account owner: Joe Blogs - Account Balance: £32.73 - Accounts Number: 3")
+customer_ronnie = Bank_account("Ronnie")
+customer_peppa = Bank_account("Peppa")
+customer_ronnie.deposit(10)
+print(customer_ronnie.balance)
+peppa_acc_num = customer_peppa.account_number
+print(peppa_acc_num)
+customer_ronnie.transfer(10, peppa_acc_num)
+print(customer_ronnie.balance)
+print(customer_peppa.balance)

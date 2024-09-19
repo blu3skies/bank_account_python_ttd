@@ -25,7 +25,7 @@ def test_new_accounts_updates_db():
     
     account = Bank_account("Test Account", 50.0)
     
-    cursor.execute('SELECT balance FROM Accounts WHERE account_name = ?', ("Test Account",))
+    cursor.execute('SELECT balance FROM Accounts WHERE account_name = ?', (account.account_name,))
     result = cursor.fetchone()
     
     assert result[0] == 50  # Verify the balance was correctly inserted
@@ -44,3 +44,34 @@ def test_deposit_updates_db():
     cursor.execute('SELECT balance FROM Accounts WHERE account_number = ?', (acc_num,))
     result = cursor.fetchone()
     assert result[0] == 31
+
+def test_transfer():
+    conn = sqlite3.connect('bank.db')
+    cursor = conn.cursor()
+
+    ronnie = Bank_account("Ronnie", 10)
+    peppa = Bank_account("Peppa", 0)
+
+    ronnie.transfer(10, peppa.account_number)
+
+    cursor.execute('SELECT balance FROM Accounts WHERE account_number = ?', (ronnie.account_number,))
+    result = cursor.fetchone()
+    assert result[0] == 0
+
+    cursor.execute('SELECT balance FROM Accounts WHERE account_number = ?', (peppa.account_number,))
+    result = cursor.fetchone()
+    assert result[0] == 10
+
+def test_transfer_db():
+    conn = sqlite3.connect('bank.db')
+    cursor = conn.cursor()
+
+    ronnie = Bank_account("Ronnie", 50)
+    peppa = Bank_account("Peppa", 10)
+
+    peppa.transfer(10, ronnie.account_number)
+    peppa_acc_number = peppa.account_number 
+
+    cursor.execute('SELECT sender_account_number FROM Transactions WHERE recipient_account_number = ?', (ronnie.account_number,))
+    result = cursor.fetchone()
+    assert int(result[0]) == peppa_acc_number
