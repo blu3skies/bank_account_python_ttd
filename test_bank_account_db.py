@@ -70,8 +70,20 @@ def test_transfer_db():
     peppa = Bank_account("Peppa", 10)
 
     peppa.transfer(10, ronnie.account_number)
-    peppa_acc_number = peppa.account_number 
 
     cursor.execute('SELECT sender_account_number FROM Transactions WHERE recipient_account_number = ?', (ronnie.account_number,))
     result = cursor.fetchone()
-    assert int(result[0]) == peppa_acc_number
+    assert int(result[0]) == peppa.account_number
+
+    cursor.execute('SELECT recipient_account_number FROM Transactions WHERE sender_account_number = ?', (peppa.account_number,))
+    result = cursor.fetchone()
+    assert int(result[0]) == ronnie.account_number
+
+    cursor.execute('SELECT amount FROM Transactions WHERE recipient_account_number = ?', (ronnie.account_number,))
+    result = cursor.fetchone()
+    assert int(result[0]) == 10
+
+    cursor.execute('SELECT amount FROM Transactions WHERE recipient_account_number = ?', (ronnie.account_number,))
+    result = cursor.fetchone()
+    assert result[0] != None
+
