@@ -85,6 +85,14 @@ class Bank_account:
             raise ValueError("Insufficient balance")
         else:
             self.balance -= amount
+            conn =  sqlite3.connect('bank.db')
+            cursor = conn.cursor()
+            cursor.execute(''' 
+                       INSERT INTO Transactions (sender_account_number, recipient_account_number, amount)
+                       VALUES (?, ?, ?)
+                       ''', (self.account_number, None, amount))
+            conn.commit()
+            conn.close()   
 
     def transfer(self, amount, recipient_account_number):
         if self.balance < amount:

@@ -4,10 +4,13 @@ from bank_account import Bank_account
 
 @pytest.fixture(autouse=True)
 def setup_db():
-    # This will run before each test automatically
     conn = sqlite3.connect('bank.db')
     cursor = conn.cursor()
+    
+    # Drop and recreate the tables
     cursor.execute('DROP TABLE IF EXISTS Accounts')
+    cursor.execute('DROP TABLE IF EXISTS Transactions')
+    
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS Accounts (
         account_number INTEGER PRIMARY KEY,
@@ -15,10 +18,18 @@ def setup_db():
         balance REAL NOT NULL
     )
     ''')
-    
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS Transactions (
+        trans_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        sender_account_number INTEGER,  -- NULL allowed
+        recipient_account_number INTEGER,  -- NULL allowed
+        amount REAL NOT NULL
+    )
+    ''')
+
     conn.commit()
     conn.close()
-
 def test_new_accounts_updates_db():
     # Create a new account and check if it updates in the database
     conn = sqlite3.connect('bank.db')
@@ -98,3 +109,16 @@ def test_deposit_updates_transactions_db():
     cursor.execute('SELECT amount FROM Transactions WHERE recipient_account_number = ? ', (bentley.account_number,))
     result = cursor.fetchone()
     assert result[0] == 1000
+
+def test_withdrawl_updates_transactions_db():
+    conn = sqlite3.connect('bank.db')
+    cursor = conn.cursor()
+
+    ratbag = Bank_account("Ratbag")
+
+    ratbag.deposit(100)
+    ratbag.withdraw(1)
+
+    cursor.execute('SELECT amount FROM Transactions WHERE sender_account_number = ?', (ratbag.account_number,))
+    result = cursor.fetchone()
+    assert result[0] == 1
