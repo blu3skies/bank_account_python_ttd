@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS Accounts (
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS Transactions (
     trans_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    sender_account_number REAL NOT NULL,
-    recipient_account_number REAL NOT NULL,
+    sender_account_number INTEGER,  -- NULL allowed
+    recipient_account_number INTEGER,  -- NULL allowed
     amount REAL NOT NULL
 )
 ''')
@@ -72,8 +72,13 @@ class Bank_account:
                        SET balance = ?
                        Where account_number = ? 
                        ''', (self.balance, self.account_number))
+        
+        cursor.execute(''' 
+                       INSERT INTO Transactions (sender_account_number, recipient_account_number, amount)
+                       VALUES (?, ?, ?)
+                       ''', (None, self.account_number, amount))
         conn.commit()
-        conn.close()
+        conn.close()    
 
     def withdraw(self, amount):
         if self.balance < amount:
@@ -109,12 +114,12 @@ class Bank_account:
     def summarising(self):
         self.summary = f"Account owner: {self.account_name} - Account Balance: £{self.balance} - Accounts Number: {self.account_number}"
 
-customer_ronnie = Bank_account("Ronnie")
-customer_peppa = Bank_account("Peppa")
-customer_ronnie.deposit(10)
-print(customer_ronnie.balance)
-peppa_acc_num = customer_peppa.account_number
-print(peppa_acc_num)
-customer_ronnie.transfer(10, peppa_acc_num)
-print(customer_ronnie.balance)
-print(customer_peppa.balance)
+#customer_ronnie = Bank_account("Ronnie")
+#customer_peppa = Bank_account("Peppa")
+#customer_ronnie.deposit(10)
+#print(customer_ronnie.balance)
+#peppa_acc_num = customer_peppa.account_number
+#print(peppa_acc_num)
+#customer_ronnie.transfer(10, peppa_acc_num)
+#print(customer_ronnie.balance)
+#print(customer_peppa.balance)
