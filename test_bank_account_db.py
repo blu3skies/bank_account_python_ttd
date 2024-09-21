@@ -8,21 +8,11 @@ def setup_db():
     conn = sqlite3.connect('bank.db')
     cursor = conn.cursor()
     cursor.execute('DROP TABLE IF EXISTS Accounts')
-    cursor.execute('DROP TABLE IF EXISTS Transactions')
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS Accounts (
         account_number INTEGER PRIMARY KEY,
         account_name TEXT NOT NULL,
         balance REAL NOT NULL
-    )
-    ''')
-
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS Transactions (
-        trans_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        sender_account_number INTEGER,  
-        recipient_account_number INTEGER NOT NULL,
-        amount REAL NOT NULL
     )
     ''')
     
@@ -41,7 +31,6 @@ def test_new_accounts_updates_db():
     
     assert result[0] == 50  # Verify the balance was correctly inserted
     
-    conn.close()
 
 def test_deposit_updates_accounts_db():
     conn = sqlite3.connect('bank.db')
@@ -55,7 +44,6 @@ def test_deposit_updates_accounts_db():
     cursor.execute('SELECT balance FROM Accounts WHERE account_number = ?', (acc_num,))
     result = cursor.fetchone()
     assert result[0] == 31
-    conn.close()
 
 def test_transfer():
     conn = sqlite3.connect('bank.db')
@@ -73,7 +61,6 @@ def test_transfer():
     cursor.execute('SELECT balance FROM Accounts WHERE account_number = ?', (peppa.account_number,))
     result = cursor.fetchone()
     assert result[0] == 10
-    conn.close()
 
 def test_transfer_db():
     conn = sqlite3.connect('bank.db')
@@ -99,7 +86,7 @@ def test_transfer_db():
     cursor.execute('SELECT amount FROM Transactions WHERE recipient_account_number = ?', (ronnie.account_number,))
     result = cursor.fetchone()
     assert result[0] != None
-    conn.close()
+
 
 def test_deposit_updates_transactions_db():
     conn = sqlite3.connect('bank.db')
@@ -111,4 +98,3 @@ def test_deposit_updates_transactions_db():
     cursor.execute('SELECT amount FROM Transactions WHERE recipient_account_number = ? ', (bentley.account_number,))
     result = cursor.fetchone()
     assert result[0] == 1000
-    conn.close()
