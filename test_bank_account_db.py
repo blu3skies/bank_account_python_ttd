@@ -22,6 +22,7 @@ def setup_db():
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS Transactions (
         trans_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        transaction_time DATETIME DEFAULT CURRENT_TIMESTAMP,
         sender_account_number INTEGER,  -- NULL allowed
         recipient_account_number INTEGER,  -- NULL allowed
         amount REAL NOT NULL
@@ -98,6 +99,9 @@ def test_transfer_db():
     result = cursor.fetchone()
     assert result[0] != None
 
+    cursor.execute('SELECT transaction_time FROM Transactions WHERE recipient_account_number = ?', (ronnie.account_number,))
+    result = cursor.fetchone()
+    assert result[0] != None
 
 def test_deposit_updates_transactions_db():
     conn = sqlite3.connect('bank.db')
