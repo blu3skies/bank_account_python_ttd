@@ -14,6 +14,7 @@ def setup_db():
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS Accounts (
         account_number INTEGER PRIMARY KEY,
+        type TEXT, -- NULL allowed
         account_name TEXT NOT NULL,
         balance REAL NOT NULL
     )

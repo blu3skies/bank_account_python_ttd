@@ -7,6 +7,7 @@ cursor = conn.cursor()
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS Accounts (
     account_number INTEGER PRIMARY KEY,
+    type TEXT, -- NULL allowed
     account_name TEXT NOT NULL,
     balance REAL NOT NULL
 )
@@ -15,6 +16,7 @@ CREATE TABLE IF NOT EXISTS Accounts (
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS Transactions (
     trans_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    transaction_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     sender_account_number INTEGER,  -- NULL allowed
     recipient_account_number INTEGER,  -- NULL allowed
     amount REAL NOT NULL
@@ -25,11 +27,13 @@ class Bank_account:
     __account_name = ""
     __balance = 0
     __account_number = 0
+    __type = ""
     __summary = ""
 
     def __init__(self, account_name, balance=0.00, summary=""):
         self.account_name = account_name
         self.balance = balance
+        self.type = ""
         self.account_number = self.generate_unique_account_number()
         self.summary = summary
 
@@ -56,9 +60,9 @@ class Bank_account:
         #print(f"Inserting account: {self.account_number}, {self.account_name}, {self.balance}")
 
         cursor.execute('''
-                       INSERT INTO Accounts (account_number, account_name, balance)
-                       VALUES (?, ?, ?)
-                       ''', (self.account_number, self.account_name, self.balance))
+                       INSERT INTO Accounts (account_number, type, account_name, balance)
+                       VALUES (?, ?, ?, ?)
+                       ''', (self.account_number, self.type, self.account_name, self.balance))
         conn.commit()
         conn.close()
 
