@@ -44,20 +44,19 @@ def test_create_savings_account():
 
     assert result[0] == "Savings"
 
-#def test_add_interest_rate_to_balance():
-#    
-#    conn = sqlite3.connect('bank.db')
-#    cursor = conn.cursor()
-#    
-#    bridie = Savings_account("Bridie")
-#    print(bridie.type)
-#
-#    bridie.deposit(100)
-#    bridie.apply_interest()
-#
-#    cursor.execute('SELECT balance FROM Accounts WHERE account_number = ?', (bridie.account_number,))
-#    result = cursor.fetchone()
-#
-#    assert result[0] == 106
-#
+def test_add_interest_rate_to_balance():
+    
+    conn = sqlite3.connect('bank.db')
+    cursor = conn.cursor()
+    
+    bridie = Savings_account("Bridie")
+    
+    bridie.deposit(100)
+    bridie.apply_interest()
+
+    cursor.execute('SELECT balance FROM Accounts WHERE account_number = ?', (bridie.account_number,))
+    result = cursor.fetchone()
+
+    assert result[0] == 106
+
 
