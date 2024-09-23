@@ -30,6 +30,7 @@ def setup_db():
     )
     ''')
 
+
 def test_create_savings_account():
 
     conn = sqlite3.connect('bank.db')
@@ -41,8 +42,20 @@ def test_create_savings_account():
     result = cursor.fetchone()
     print(result)
 
-
     assert result[0] == "Savings"
+
+def test_savings_account_number_ends_02():
+
+    conn = sqlite3.connect('bank.db')
+    cursor = conn.cursor()
+    
+    juan = Savings_account("Juan")
+    juan.deposit(999)
+
+    cursor.execute('SELECT account_number FROM Accounts WHERE balance = 999', )
+    result = cursor.fetchone()
+
+    assert str(result[0]).endswith("02")
 
 def test_add_interest_rate_to_balance():
     
@@ -50,7 +63,7 @@ def test_add_interest_rate_to_balance():
     cursor = conn.cursor()
     
     bridie = Savings_account("Bridie")
-    
+
     bridie.deposit(100)
     bridie.apply_interest()
 
