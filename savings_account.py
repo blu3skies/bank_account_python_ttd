@@ -34,7 +34,3 @@ class Savings_account(Bank_account):
         cursor.execute('UPDATE Accounts SET balance = ? WHERE account_number = ?', (new_balance, self.account_number))
         conn.commit()
         conn.close()
-
-joe = Savings_account("joe")
-print(joe.account_number)
-#print(str(joe.account_number).endswith("02"))
